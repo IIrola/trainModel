@@ -5,13 +5,15 @@ import seaborn as sb
 from sklearn.cluster import KMeans
 import tkinter as tk
 import matplotlib
+import os
+os.environ["LOKY_MAX_CPU_COUNT"] = '1'
 
 matplotlib.use('TkAgg')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-plt.rcParams['figure.figsize'] = (7, 7)
-plt.rcParams['figure.dpi'] = 100
+plt.rcParams['figure.figsize'] = (16, 9)
+plt.rcParams['figure.dpi'] = 50
 plt.style.use('ggplot')
 fig = plt.Figure()
 
@@ -55,7 +57,7 @@ class window:
         elbowbtn = tk.Button(button_frame, text="Show Elbow Curve", command=lambda: self.genElbowCurve(), pady=10)
         elbowbtn.pack(side=tk.LEFT)
 
-        continueBtn = tk.Button(button_frame, text="Start train", command=lambda: self.start(self.gPath, self.gX, self.gY), pady=10)
+        continueBtn = tk.Button(button_frame, text="Start train", command=lambda: self.start(self.gPath, self.gEntry, self.gResult), pady=10)
         continueBtn.pack(side=tk.LEFT)
 
         closeBtn = tk.Button(button_frame, text="Close", command=lambda: self.window.destroy(), pady=10)
@@ -70,27 +72,32 @@ class window:
         self.scrollbar.pack(side=tk.LEFT, fill=tk.Y)
 
         # Configure the Canvas to use the Scrollbar
-        self.canvass.configure(yscrollcommand=self.scrollbar.set, width=700, height=500)
+        self.canvass.configure(yscrollcommand=self.scrollbar.set, width=16*60, height=9*60)
 
         # Create a Frame and add it to the Canvas
-        self.frame = tk.Frame(self.canvass)
-        self.frame.pack(fill=tk.BOTH, expand=True)
-        self.canvass.create_window((0, 0), window=self.frame, anchor='nw')
-
+        self.frameTxt = tk.Frame(self.canvass)
+        self.frameTxt.pack(fill=tk.BOTH, expand=True)
+        self.canvass.create_window((0, 0), window=self.frameTxt, anchor='e')
+        self.frameFig = tk.Frame(self.canvass)
+        self.frameFig.pack(fill=tk.BOTH, expand=True)
+        self.canvass.create_window((0, 0), window=self.frameFig, anchor='w')
         # Start the tkinter main loop
         self.window.mainloop()
 
     def genText(self, txt):
-        label.append(tk.Label(self.frame, text=txt, justify='center'))
+        label.append(tk.Label(self.frameTxt, text=txt, justify='center'))
         label[label.__len__() - 1].pack()
+        self.upt()
 
     # Create a matplotlib figure
     def genFig(self, fig):
         # Add the figure to a tkinter canvas
-        canvas.append(FigureCanvasTkAgg(fig, master=self.frame))
+        canvas.append(FigureCanvasTkAgg(fig, master=self.frameFig))
         canvas[canvas.__len__() - 1].draw()
         canvas[canvas.__len__() - 1].get_tk_widget().pack()
+        self.upt()
 
+    def upt(self):
         self.window.update()
         self.canvass.configure(scrollregion=self.canvass.bbox('all'))
 

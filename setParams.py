@@ -2,13 +2,8 @@ import tkinter as tk
 import os
 import test as t
 
-
 def get_cpu_cores():
-    import multiprocessing
-
-    num_cores = multiprocessing.cpu_count()
-    return int(num_cores)
-
+    return os.cpu_count()
 
 class SetParams:
     def __init__(self, path, X, y):
@@ -29,18 +24,19 @@ class SetParams:
 
         # Create a Label for number of cores
         lbl_cores = tk.Label(self.window,
-                             text=f"El sistema cuenta con {get_cpu_cores()}\nCuantos uso para el entrenamiento?\nCantidad de núcleos:")
+                             text=f"Cuantos uso nucleos para el entrenamiento?\nDefault: {get_cpu_cores()}\nCantidad de núcleos:")
         lbl_cores.pack()
 
         # Create a Textbox (Entry) for number of cores
         self.txt_cores = tk.Entry(self.window)
         self.txt_cores.pack()
+        self.txt_cores.insert(0, get_cpu_cores())
 
         # Create a Button to submit the inputs
         submit_button = tk.Button(self.window, text="Start training", command=self.setValues)
         submit_button.pack()
 
-        cancel_button = tk.Button(self.window, text="Cancel training", command=self.window.quit)
+        cancel_button = tk.Button(self.window, text="Cancel training", command=lambda: self.window.destroy())
         cancel_button.pack()
 
         # Start the tkinter main loop
@@ -49,5 +45,5 @@ class SetParams:
     def setValues(self):
         clusters = int(self.txt_clusters.get())
         cores = int(self.txt_cores.get())
-        t.start_train(clusters, cores, self.path, self.X, self.y)
+        tmp = t.trainer(clusters, cores, self.path, self.X, self.y)
 
