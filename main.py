@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 import pandas as pd
-import test
+
 
 class selection:
     def __init__(self, entry: list, result: list, data):
@@ -185,7 +185,8 @@ class CSVViewerApp(tk.Tk):
             print("Training")
             print("Selected Columns to Entry:", self.entry_columns)
             print("Selected Columns to Result:", self.result_columns)
-            test.start_train(self.file_path, self.entry_columns, self.result_columns)
+            import parameters as param
+            T = param.window(self.entry_columns, self.result_columns, self.file_path)
         else:
             print("No columns selected")
 
